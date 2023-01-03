@@ -18,6 +18,8 @@ namespace ChannelEngineConsoleApp
 
         public void Run()
         {
+            _businessLogic.GetInProgressOrders();
+            //_businessLogic.GetTop5Products();
             _businessLogic.updateProductStocks();
         }
 

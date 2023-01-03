@@ -38,12 +38,24 @@ namespace APILibrary.Utilities
 
         public async Task<List<OrdersModel>> GetTop5ProductsAsync()
         {
-            string json = GetAllInProcessOrdersAsync().Result;
+            List<OrdersModel> listOrders = new List<OrdersModel>();
+            try
+            {
+                string json = await GetAllInProcessOrdersAsync();
 
-            //string result = str.Substring(1, str.Length - 2);
-            //var jObject = JObject.Parse(result);
-            List<OrdersModel> listOrders = JsonConvert.DeserializeObject<List<OrdersModel>>(json);
-            return listOrders;
+                if (!string.IsNullOrEmpty(json))
+                {
+                    listOrders = JsonConvert.DeserializeObject<List<OrdersModel>>(json);
+                }
+
+                return listOrders;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+
         }
 
         public async Task<bool> UpdateProductsStocksAsync(Product product)
@@ -62,13 +74,13 @@ namespace APILibrary.Utilities
                 listProduct.Add(product);
 
                 var content = new StringContent(JsonConvert.SerializeObject(listProduct), Encoding.UTF8, "application/json");
-                HttpResponseMessage result = client.PostAsync(url, content).Result;
+                HttpResponseMessage result = await client.PostAsync(url, content);
 
-                if(result.IsSuccessStatusCode)
+                if (result.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("result.Content = "+ result.Content);
+                    Console.WriteLine("result.Content = " + result.Content);
                     Console.WriteLine("result.StatusCode = " + result.StatusCode);
-                    Console.WriteLine("result.RequestMessage = " + result.RequestMessage); 
+                    Console.WriteLine("result.RequestMessage = " + result.RequestMessage);
                     return true;
                 }
                 else
